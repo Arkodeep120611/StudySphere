@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Documents{% endblock %}
+{% block heading %}Documents{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="card-head">
+    <h2>Upload notes</h2>
+    <span class="muted small">PDF, TXT or DOCX · up to 10 MB</span>
+  </div>
+  <form id="upload-form" class="upload-form" enctype="multipart/form-data">
+    <label class="dropzone" id="dropzone">
+      <i data-lucide="file-up"></i>
+      <span class="dropzone-text"><strong>Choose a file</strong> or drag it here</span>
+      <span class="dropzone-file muted small" id="file-name">No file selected</span>
+      <input type="file" name="file" id="file-input" accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+    </label>
+    <div class="form-row">
+      <label class="field">
+        <span>Title <small class="muted">(optional)</small></span>
+        <input class="input" type="text" name="title" maxlength="200" placeholder="Defaults to the file name">
+      </label>
+      <label class="field">
+        <span>Subject <small class="muted">(optional)</small></span>
+        <input class="input" type="text" name="subject" maxlength="100" placeholder="e.g. Biology">
+      </label>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit" id="upload-btn"><i data-lucide="upload"></i><span>Upload and extract text</span></button>
+    </div>
+  </form>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>Your documents</h2>
+    <div class="search">
+      <i data-lucide="search"></i>
+      <input class="input" type="search" id="doc-search" placeholder="Search titles, subjects and text" aria-label="Search documents">
+    </div>
+  </div>
+  <div id="doc-list" class="doc-grid" aria-live="polite">
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/documents.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ quiz.title }}{% endblock %}
+{% block heading %}{{ quiz.title }}{% endblock %}
+{% block content %}
+<a class="back-link small" href="{{ url_for('pages.quizzes') }}"><i data-lucide="arrow-left"></i> All quizzes</a>
+
+<div id="quiz-root" data-quiz-id="{{ quiz.id }}" class="quiz-root">
+  <div class="card skeleton-card-tall"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}

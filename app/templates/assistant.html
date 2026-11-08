@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}AI Assistant{% endblock %}
+{% block heading %}AI Assistant{% endblock %}
+{% block content %}
+<div class="chat-layout card">
+  <div class="chat-head">
+    <label class="field chat-doc">
+      <span class="sr-only">Document</span>
+      <select class="input select" id="doc-select" data-preselect="{{ preselect or '' }}" aria-label="Choose a document">
+        <option value="">Loading documents…</option>
+      </select>
+    </label>
+    <div class="chat-quick" id="quick-actions" hidden>
+      <button class="chip" type="button" data-prompt="Summarise this document with the key points.">Summarise</button>
+      <button class="chip" type="button" data-prompt="What are the key concepts in this document? Explain each briefly.">Key concepts</button>
+      <button class="chip" type="button" data-prompt="Explain the most difficult idea in this document in simple terms.">Explain simply</button>
+    </div>
+    <button class="btn btn-ghost btn-sm" type="button" id="clear-chat" hidden><i data-lucide="eraser"></i><span>Clear chat</span></button>
+  </div>
+
+  <div id="chat-log" class="chat-log" aria-live="polite">
+    <div class="empty" id="chat-empty">
+      <i data-lucide="message-square"></i>
+      <h3>Ask about your notes</h3>
+      <p class="muted">Pick a document above. Answers come only from that document, and the assistant will say so when something isn't covered.</p>
+    </div>
+  </div>
+
+  <form id="chat-form" class="chat-input">
+    <textarea class="input textarea" id="chat-text" rows="2" maxlength="2000" placeholder="Ask a question about this document…" aria-label="Message" disabled></textarea>
+    <button class="btn btn-primary" type="submit" id="chat-send" disabled><i data-lucide="send"></i><span>Send</span></button>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+{% endblock %}

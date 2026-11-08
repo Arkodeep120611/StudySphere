@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b5bd6' stroke-width='2'%3E%3Cpath d='M22 10v6M2 10l10-5 10 5-10 5z'/%3E%3Cpath d='M6 12v5c3 3 9 3 12 0v-5'/%3E%3C/svg%3E">
+  <title>{% block title %}Dashboard{% endblock %} · StudySphere</title>
+  <script src="{{ url_for('static', filename='js/theme-init.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% set parents = {'pages.document_detail': 'pages.documents', 'pages.quiz_detail': 'pages.quizzes', 'pages.deck_detail': 'pages.flashcards'} %}
+{% set current_ep = parents.get(request.endpoint, request.endpoint) %}
+{% set nav = [
+  ('pages.dashboard', 'Dashboard', 'layout-dashboard'),
+  ('pages.documents', 'Documents', 'file-text'),
+  ('pages.quizzes', 'Quizzes', 'list-checks'),
+  ('pages.flashcards', 'Flashcards', 'layers'),
+  ('pages.assistant', 'AI Assistant', 'bot'),
+  ('pages.analytics', 'Analytics', 'chart-column'),
+  ('pages.settings', 'Settings', 'settings'),
+] %}
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="{{ url_for('pages.dashboard') }}">
+      <span class="brand-mark"><i data-lucide="graduation-cap"></i></span>
+      <span>StudySphere</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      {% for endpoint, label, icon in nav %}
+      <a href="{{ url_for(endpoint) }}" class="nav-link{% if current_ep == endpoint %} active{% endif %}"{% if current_ep == endpoint %} aria-current="page"{% endif %}>
+        <i data-lucide="{{ icon }}"></i><span>{{ label }}</span>
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="sidebar-foot">
+      <div class="user-chip">
+        <div class="avatar">{{ current_user.name[:1] | upper }}</div>
+        <div class="user-meta">
+          <div class="user-name">{{ current_user.name }}</div>
+          <div class="muted small truncate">{{ current_user.email }}</div>
+        </div>
+      </div>
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="nav-link nav-button"><i data-lucide="log-out"></i><span>Log out</span></button>
+      </form>
+    </div>
+  </aside>
+  <div class="scrim" data-sidebar-close hidden></div>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" type="button" data-sidebar-toggle aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+        <i data-lucide="menu"></i>
+      </button>
+      <h1 class="topbar-title">{% block heading %}{% endblock %}</h1>
+      <div class="topbar-actions">{% block actions %}{% endblock %}
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle dark mode" title="Toggle dark mode">
+          <i data-lucide="moon"></i>
+        </button>
+      </div>
+    </header>
+
+    {% if not ai_enabled %}
+    <div class="banner banner-warn" role="status">
+      <i data-lucide="triangle-alert"></i>
+      <span>AI features are off. Add <code>GEMINI_API_KEY</code> to your <code>.env</code> file and restart the server to enable quizzes, flashcards and the assistant.</span>
+    </div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="flash-stack">
+        {% for category, message in messages %}
+        <div class="banner banner-{{ 'error' if category == 'error' else ('success' if category == 'success' else 'info') }}" role="status">
+          <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="content">
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+</div>
+
+<div class="toast-host" id="toast-host" aria-live="polite"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

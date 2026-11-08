@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block heading %}Settings{% endblock %}
+{% block content %}
+<div class="split">
+  <section class="card">
+    <h2>Profile</h2>
+    <form id="profile-form" class="form-stack">
+      <label class="field">
+        <span>Name</span>
+        <input class="input" type="text" name="name" maxlength="80" value="{{ current_user.name }}" required>
+      </label>
+      <label class="field">
+        <span>Email</span>
+        <input class="input" type="email" value="{{ current_user.email }}" disabled>
+      </label>
+      <div class="form-actions"><button class="btn btn-primary btn-sm" type="submit">Save profile</button></div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Appearance</h2>
+    <p class="muted small">Light or dark theme. Saved in this browser.</p>
+    <div class="segmented" role="group" aria-label="Theme">
+      <button type="button" class="seg-btn" data-set-theme="light"><i data-lucide="sun"></i><span>Light</span></button>
+      <button type="button" class="seg-btn" data-set-theme="dark"><i data-lucide="moon"></i><span>Dark</span></button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Change password</h2>
+    <form id="password-form" class="form-stack">
+      <label class="field">
+        <span>Current password</span>
+        <input class="input" type="password" name="current_password" autocomplete="current-password" required>
+      </label>
+      <label class="field">
+        <span>New password <small class="muted">(8+ characters)</small></span>
+        <input class="input" type="password" name="new_password" minlength="8" maxlength="128" autocomplete="new-password" required>
+      </label>
+      <label class="field">
+        <span>Confirm new password</span>
+        <input class="input" type="password" name="confirm_password" minlength="8" maxlength="128" autocomplete="new-password" required>
+      </label>
+      <div class="form-actions"><button class="btn btn-primary btn-sm" type="submit">Update password</button></div>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>AI service</h2>
+    <dl class="meta">
+      <dt>Status</dt>
+      <dd>{% if ai_enabled %}<span class="badge badge-success">Connected</span>{% else %}<span class="badge badge-warn">Not configured</span>{% endif %}</dd>
+      <dt>Model</dt><dd><code id="ai-model">{{ config['GEMINI_MODEL'] }}</code></dd>
+    </dl>
+    <p class="muted small">The Gemini API key lives only in the server's <code>.env</code> file and is never sent to the browser.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}

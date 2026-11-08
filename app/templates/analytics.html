@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block heading %}Analytics{% endblock %}
+{% block content %}
+<div class="chart-grid">
+  <section class="card chart-card">
+    <div class="card-head"><h2>Quiz scores over time</h2><span class="muted small">Last 30 attempts</span></div>
+    <div class="chart-box"><canvas id="chart-scores" aria-label="Quiz score trend"></canvas></div>
+    <p class="empty-note muted" id="scores-empty" hidden>Complete a quiz to see your score trend.</p>
+  </section>
+
+  <section class="card chart-card">
+    <div class="card-head"><h2>Study activity</h2><span class="muted small">Last 14 days</span></div>
+    <div class="chart-box"><canvas id="chart-activity" aria-label="Daily study activity"></canvas></div>
+  </section>
+
+  <section class="card chart-card">
+    <div class="card-head"><h2>Average score by subject</h2></div>
+    <div class="chart-box"><canvas id="chart-subjects" aria-label="Average quiz score per subject"></canvas></div>
+    <p class="empty-note muted" id="subjects-empty" hidden>Subject progress appears once you take quizzes.</p>
+  </section>
+
+  <section class="card chart-card">
+    <div class="card-head"><h2>Flashcard mastery</h2></div>
+    <div class="chart-box chart-box-small"><canvas id="chart-cards" aria-label="Flashcard status breakdown"></canvas></div>
+    <p class="empty-note muted" id="cards-empty" hidden>Create a deck and mark cards to track mastery.</p>
+  </section>
+</div>
+
+<section class="card">
+  <div class="card-head"><h2>Subject progress</h2></div>
+  <div class="table-wrap">
+    <table class="table" id="subject-table">
+      <thead>
+        <tr><th>Subject</th><th>Documents</th><th>Quizzes</th><th>Avg. score</th><th>Flashcards known</th></tr>
+      </thead>
+      <tbody><tr><td colspan="5" class="muted">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}

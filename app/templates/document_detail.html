@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ doc.title }}{% endblock %}
+{% block heading %}{{ doc.title }}{% endblock %}
+{% block content %}
+<a class="back-link small" href="{{ url_for('pages.documents') }}"><i data-lucide="arrow-left"></i> All documents</a>
+
+<div class="split split-wide">
+  <section class="card">
+    <div class="card-head">
+      <h2>Extracted text</h2>
+      <span class="muted small">{{ '{:,}'.format(doc.char_count) }} characters</span>
+    </div>
+    <div class="doc-text" tabindex="0">{{ doc.text_content }}</div>
+  </section>
+
+  <aside class="stack">
+    <section class="card">
+      <h2>Details</h2>
+      <dl class="meta">
+        <dt>Subject</dt><dd>{{ doc.subject }}</dd>
+        <dt>File</dt><dd class="truncate" title="{{ doc.original_name }}">{{ doc.original_name }}</dd>
+        <dt>Type</dt><dd>{{ doc.file_type | upper }}</dd>
+        <dt>Size</dt><dd>{{ '%.1f' | format(doc.size_bytes / 1024) }} KB</dd>
+        <dt>Uploaded</dt><dd>{{ doc.created_at.strftime('%d %b %Y') }}</dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2>Study with this document</h2>
+      <div class="stack-sm">
+        <a class="btn btn-primary btn-block" href="{{ url_for('pages.quizzes', document=doc.id) }}"><i data-lucide="list-checks"></i><span>Generate quiz</span></a>
+        <a class="btn btn-block" href="{{ url_for('pages.flashcards', document=doc.id) }}"><i data-lucide="layers"></i><span>Create flashcards</span></a>
+        <a class="btn btn-block" href="{{ url_for('pages.assistant', document=doc.id) }}"><i data-lucide="bot"></i><span>Ask the assistant</span></a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Edit</h2>
+      <form id="doc-edit-form" class="form-stack" data-doc-id="{{ doc.id }}">
+        <label class="field">
+          <span>Title</span>
+          <input class="input" type="text" name="title" value="{{ doc.title }}" maxlength="200" required>
+        </label>
+        <label class="field">
+          <span>Subject</span>
+          <input class="input" type="text" name="subject" value="{{ doc.subject }}" maxlength="100">
+        </label>
+        <div class="form-actions">
+          <button class="btn btn-primary btn-sm" type="submit">Save changes</button>
+          <button class="btn btn-danger btn-sm" type="button" id="doc-delete" data-doc-id="{{ doc.id }}"><i data-lucide="trash-2"></i><span>Delete</span></button>
+        </div>
+      </form>
+    </section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/document-detail.js') }}"></script>
+{% endblock %}

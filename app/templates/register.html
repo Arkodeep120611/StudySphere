@@ -1,0 +1,29 @@
+{% extends "auth_base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<h1 class="auth-title">Create your account</h1>
+<p class="muted">Turn your notes into quizzes, flashcards and answers.</p>
+
+<form method="post" class="form-stack js-submit" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label class="field">
+    <span>Full name</span>
+    <input class="input" type="text" name="name" value="{{ form.name }}" maxlength="80" autocomplete="name" required autofocus>
+  </label>
+  <label class="field">
+    <span>Email</span>
+    <input class="input" type="email" name="email" value="{{ form.email }}" maxlength="255" autocomplete="email" required>
+  </label>
+  <label class="field">
+    <span>Password <small class="muted">(8+ characters)</small></span>
+    <input class="input" type="password" name="password" minlength="8" maxlength="128" autocomplete="new-password" required>
+  </label>
+  <label class="field">
+    <span>Confirm password</span>
+    <input class="input" type="password" name="confirm_password" minlength="8" maxlength="128" autocomplete="new-password" required>
+  </label>
+  <button class="btn btn-primary btn-block" type="submit">Create account</button>
+</form>
+
+<p class="auth-switch muted">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+{% endblock %}

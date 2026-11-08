@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block heading %}Dashboard{% endblock %}
+{% block actions %}
+<a class="btn btn-primary btn-sm" href="{{ url_for('pages.documents') }}"><i data-lucide="upload"></i><span>Upload notes</span></a>
+{% endblock %}
+{% block content %}
+<div class="stat-grid" id="stat-grid">
+  {% for label in ['Documents', 'Quizzes completed', 'Average score', 'Flashcards mastered'] %}
+  <div class="card stat"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line"></div></div>
+  {% endfor %}
+</div>
+
+<div class="split">
+  <section class="card">
+    <div class="card-head">
+      <h2>Recent activity</h2>
+      <span class="muted small" id="activity-summary"></span>
+    </div>
+    <div id="activity" class="list">
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Recent documents</h2>
+      <a class="small" href="{{ url_for('pages.documents') }}">View all</a>
+    </div>
+    <div id="recent-docs" class="list">
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+    </div>
+  </section>
+</div>
+
+<section class="card quick-actions">
+  <h2>Continue studying</h2>
+  <div class="action-row">
+    <a class="action-tile" href="{{ url_for('pages.quizzes') }}"><i data-lucide="list-checks"></i><span>Generate a quiz</span></a>
+    <a class="action-tile" href="{{ url_for('pages.flashcards') }}"><i data-lucide="layers"></i><span>Make flashcards</span></a>
+    <a class="action-tile" href="{{ url_for('pages.assistant') }}"><i data-lucide="bot"></i><span>Ask the assistant</span></a>
+    <a class="action-tile" href="{{ url_for('pages.analytics') }}"><i data-lucide="chart-column"></i><span>View progress</span></a>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

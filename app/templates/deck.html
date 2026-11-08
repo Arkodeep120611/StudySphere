@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ deck.title }}{% endblock %}
+{% block heading %}{{ deck.title }}{% endblock %}
+{% block content %}
+<a class="back-link small" href="{{ url_for('pages.flashcards') }}"><i data-lucide="arrow-left"></i> All decks</a>
+
+<div id="deck-root" data-deck-id="{{ deck.id }}" class="deck-root">
+  <div class="card skeleton-card-tall"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/deck.js') }}"></script>
+{% endblock %}

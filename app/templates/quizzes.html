@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Quizzes{% endblock %}
+{% block heading %}Quizzes{% endblock %}
+{% block content %}
+<div class="split split-wide">
+  <section class="card">
+    <div class="card-head"><h2>Generate a quiz</h2></div>
+    <form id="quiz-form" class="form-stack">
+      <label class="field">
+        <span>Source document</span>
+        <select class="input select" name="document_id" id="doc-select" data-preselect="{{ preselect or '' }}" required>
+          <option value="">Loading documents…</option>
+        </select>
+      </label>
+      <div class="form-row">
+        <label class="field">
+          <span>Difficulty</span>
+          <select class="input select" name="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Question type</span>
+          <select class="input select" name="question_type">
+            <option value="mixed" selected>Mixed</option>
+            <option value="mcq">Multiple choice</option>
+            <option value="true_false">True / False</option>
+          </select>
+        </label>
+      </div>
+      <label class="field">
+        <span>Number of questions</span>
+        <input class="input" type="number" name="count" min="1" max="20" value="10" required>
+      </label>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" id="quiz-btn"><i data-lucide="sparkles"></i><span>Generate quiz</span></button>
+      </div>
+      <p class="muted small" id="quiz-status" role="status"></p>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Your quizzes</h2>
+    </div>
+    <div id="quiz-list" class="list">
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/quizzes.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,15 @@
+.venv
+venv
+env
+.env
+.env.*
+!.env.example
+instance
+*.db
+*.sqlite3
+.idea
+.pytest_cache
+.coverage
+htmlcov
+__pycache__
+tests
