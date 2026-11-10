@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://study-sphere-ten-beige.vercel.app/sitemap.xml
+Sitemap: https://studysphere-hub.vercel.app/sitemap.xml

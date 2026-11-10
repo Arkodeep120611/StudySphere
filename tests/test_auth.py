@@ -4,8 +4,8 @@ from conftest import register
 def test_register_logs_in_and_redirects_to_dashboard(client):
     response = register(client)
     assert response.status_code == 302
-    assert response.headers["Location"].endswith("/")
-    assert client.get("/").status_code == 200
+    assert response.headers["Location"].endswith("/dashboard")
+    assert client.get("/dashboard").status_code == 200
 
 
 def test_duplicate_email_is_rejected(client):
@@ -39,7 +39,7 @@ def test_login_rejects_external_next_redirect(client):
         "/login?next=https://evil.example.com/",
         data={"email": "ada@example.com", "password": "correct-horse"},
     )
-    assert response.headers["Location"].endswith("/")
+    assert response.headers["Location"].endswith("/dashboard")
 
 
 def test_protected_pages_redirect_to_login(client):

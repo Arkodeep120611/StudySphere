@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, render_template, request
+from flask import Blueprint, abort, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from ..extensions import db
@@ -15,6 +15,14 @@ def _owned_or_404(model, obj_id):
 
 
 @bp.get("/")
+def home():
+    """Public landing page. Signed-in users go straight to their dashboard."""
+    if current_user.is_authenticated:
+        return redirect(url_for("pages.dashboard"))
+    return render_template("landing.html")
+
+
+@bp.get("/dashboard")
 @login_required
 def dashboard():
     return render_template("dashboard.html")

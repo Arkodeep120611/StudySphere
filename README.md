@@ -8,6 +8,7 @@ An AI-powered study platform for students. Upload your notes (PDF, TXT or DOCX),
 
 | Area | What it does |
 | --- | --- |
+| Homepage | Public landing page at `/` with product overview, FAQ and SEO metadata. Signed-in users are redirected to the dashboard. |
 | Authentication | Register, log in, log out, scrypt-hashed passwords, "keep me logged in", password change, profile name. |
 | Dashboard | Document count, quiz attempts, average score, flashcards known, 7-day activity, recent activity and documents. |
 | Documents | Upload PDF/TXT/DOCX (10 MB max), extracted-text view, search across titles, subjects and text with highlighted snippets, edit, delete. |
@@ -65,7 +66,7 @@ pip install pytest
 python -m pytest
 ```
 
-The suite (42 tests) covers authentication, file extraction (including renamed and corrupt files), context selection, AI output validation, the JSON API, per-user data isolation, security headers and the rendering of every page. Gemini is mocked at the service boundary, and an autouse fixture fails any test that reaches the real SDK, so the suite runs offline.
+The suite (45 tests) covers the public homepage, authentication, file extraction (including renamed and corrupt files), context selection, AI output validation, the JSON API, per-user data isolation, security headers and the rendering of every page. Gemini is mocked at the service boundary, and an autouse fixture fails any test that reaches the real SDK, so the suite runs offline.
 
 ## Project structure
 

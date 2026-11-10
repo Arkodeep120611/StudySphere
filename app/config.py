@@ -30,6 +30,9 @@ def _database_uri():
 class Config:
     # Set SECRET_KEY in .env for stable sessions. Without it, a random key is used per process.
     SECRET_KEY = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+
+    # Public address used for canonical links, Open Graph and structured data on the homepage.
+    SITE_URL = os.environ.get("SITE_URL", "https://studysphere-hub.vercel.app").strip().rstrip("/")
     SQLALCHEMY_DATABASE_URI = _database_uri()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

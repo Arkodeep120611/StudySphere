@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StudySphere: AI Study Tool for Quizzes, Flashcards and Notes</title>
+  <meta name="description" content="StudySphere is an AI study tool for students. Upload your PDF, TXT or DOCX notes and generate quizzes, flashcards and answers grounded in your own documents.">
+  <meta name="keywords" content="AI study tool, AI study assistant, study notes, AI quiz generator, flashcard maker, study app, students, revision, exam prep">
+  <meta name="author" content="StudySphere">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="{{ config.SITE_URL }}/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="StudySphere">
+  <meta property="og:title" content="StudySphere: AI Study Tool for Quizzes, Flashcards and Notes">
+  <meta property="og:description" content="Upload your notes and generate AI quizzes, flashcards and document-grounded answers. Track your progress in one place.">
+  <meta property="og:url" content="{{ config.SITE_URL }}/">
+  <meta property="og:locale" content="en_US">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="StudySphere: AI Study Tool for Quizzes, Flashcards and Notes">
+  <meta name="twitter:description" content="Upload your notes and generate AI quizzes, flashcards and document-grounded answers.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "{{ config.SITE_URL }}/#website",
+        "url": "{{ config.SITE_URL }}/",
+        "name": "StudySphere",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "{{ config.SITE_URL }}/#app",
+        "name": "StudySphere",
+        "url": "{{ config.SITE_URL }}/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any modern web browser",
+        "description": "AI study platform that turns your PDF, TXT or DOCX notes into quizzes, flashcards and document-grounded answers, with progress analytics.",
+        "featureList": "AI quizzes, AI flashcards with spaced review, document-grounded AI assistant, document search, study analytics",
+        "audience": {"@type": "EducationalAudience", "educationalRole": "student"}
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is StudySphere?",
+            "acceptedAnswer": {"@type": "Answer", "text": "StudySphere is an AI study platform for students. You upload your lecture notes or textbook extracts, then generate quizzes, flashcards and answers based on those notes, and track your progress over time."}
+          },
+          {
+            "@type": "Question",
+            "name": "What file types can I upload?",
+            "acceptedAnswer": {"@type": "Answer", "text": "You can upload PDF, TXT and DOCX files up to 10 MB. StudySphere extracts the text so you can read it, search it and use it for AI study tools."}
+          },
+          {
+            "@type": "Question",
+            "name": "Does the AI assistant answer from my notes?",
+            "acceptedAnswer": {"@type": "Answer", "text": "Yes. The AI assistant is grounded in the document you select. When the answer is not in your notes, it says so instead of guessing."}
+          },
+          {
+            "@type": "Question",
+            "name": "Can I create quizzes and flashcards from my own notes?",
+            "acceptedAnswer": {"@type": "Answer", "text": "Yes. Choose a document, then generate multiple-choice or true/false quizzes, or flashcard decks, with easy, medium or hard difficulty. Quizzes include explanations for each question and you can retake them."}
+          },
+          {
+            "@type": "Question",
+            "name": "Is my study data private?",
+            "acceptedAnswer": {"@type": "Answer", "text": "Your documents, quizzes, flashcards and progress belong to your account. Other users cannot see them."}
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b5bd6' stroke-width='2'%3E%3Cpath d='M22 10v6M2 10l10-5 10 5-10 5z'/%3E%3Cpath d='M6 12v5c3 3 9 3 12 0v-5'/%3E%3C/svg%3E">
+  <script src="{{ url_for('static', filename='js/theme-init.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="landing-body">
+
+<header class="landing-header">
+  <div class="landing-inner landing-nav">
+    <a class="brand" href="/" aria-label="StudySphere home">
+      <span class="brand-mark"><i data-lucide="graduation-cap"></i></span>
+      <span>StudySphere</span>
+    </a>
+    <nav class="landing-nav-links" aria-label="Account">
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Toggle dark mode" title="Toggle dark mode">
+        <i data-lucide="moon"></i>
+      </button>
+      <a class="btn btn-ghost btn-sm" href="{{ url_for('auth.login') }}">Log in</a>
+      <a class="btn btn-primary btn-sm" href="{{ url_for('auth.register') }}">Sign up</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="landing-hero">
+    <div class="landing-inner">
+      <p class="eyebrow">AI study tool for students</p>
+      <h1 class="landing-title">Turn your notes into AI quizzes, flashcards and answers</h1>
+      <p class="landing-lede">StudySphere is an AI study platform. Upload your PDF, TXT or DOCX notes, then generate quizzes, flashcards and an assistant that answers from your own documents. Track what you have learned in one place.</p>
+      <div class="landing-cta">
+        <a class="btn btn-primary" href="{{ url_for('auth.register') }}">Get started <i data-lucide="arrow-right"></i></a>
+        <a class="btn" href="{{ url_for('auth.login') }}">Log in</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section" aria-labelledby="features-heading">
+    <div class="landing-inner">
+      <h2 id="features-heading" class="landing-h2">Everything you need to study from your own notes</h2>
+      <p class="muted landing-intro">One workspace for your documents, practice tests, flashcards and progress.</p>
+      <div class="landing-grid">
+        <article class="card landing-feature">
+          <i data-lucide="file-text"></i>
+          <h3>Upload your notes</h3>
+          <p>Add PDF, TXT or DOCX files up to 10 MB. Search across titles, subjects and text, and keep every document organised by subject.</p>
+        </article>
+        <article class="card landing-feature">
+          <i data-lucide="list-checks"></i>
+          <h3>AI quizzes</h3>
+          <p>Create multiple-choice or true/false quizzes from a document, at easy, medium or hard difficulty. Each answer comes with an explanation, and you can retake quizzes.</p>
+        </article>
+        <article class="card landing-feature">
+          <i data-lucide="layers"></i>
+          <h3>Flashcards</h3>
+          <p>Generate flashcard decks from your notes. Flip cards, mark them as known or to revise, and filter by what still needs work.</p>
+        </article>
+        <article class="card landing-feature">
+          <i data-lucide="bot"></i>
+          <h3>AI study assistant</h3>
+          <p>Ask questions about a single document or ask for a summary and key concepts. If the answer is not in your notes, the assistant tells you.</p>
+        </article>
+        <article class="card landing-feature">
+          <i data-lucide="chart-column"></i>
+          <h3>Progress analytics</h3>
+          <p>See your score trend, daily activity, average score by subject and flashcard mastery, so you know which topics to review next.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section landing-section-alt" aria-labelledby="how-heading">
+    <div class="landing-inner">
+      <h2 id="how-heading" class="landing-h2">How StudySphere works</h2>
+      <ol class="landing-steps">
+        <li>
+          <span class="step-num">1</span>
+          <div>
+            <h3>Upload a document</h3>
+            <p>Add your lecture notes, revision sheets or textbook extracts as a PDF, TXT or DOCX file.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <div>
+            <h3>Generate study material</h3>
+            <p>Create a quiz or flashcard deck from that document, or ask the assistant a question about it.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <div>
+            <h3>Practise and track progress</h3>
+            <p>Take quizzes, review flashcards and check your analytics to see where you are improving.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="landing-section" aria-labelledby="faq-heading">
+    <div class="landing-inner landing-narrow">
+      <h2 id="faq-heading" class="landing-h2">Frequently asked questions</h2>
+      <details class="faq-item">
+        <summary>What is StudySphere?</summary>
+        <p>StudySphere is an AI study platform for students. You upload your lecture notes or textbook extracts, then generate quizzes, flashcards and answers based on those notes, and track your progress over time.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What file types can I upload?</summary>
+        <p>You can upload PDF, TXT and DOCX files up to 10 MB. StudySphere extracts the text so you can read it, search it and use it with the AI study tools.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does the AI assistant answer from my notes?</summary>
+        <p>Yes. The assistant is grounded in the document you select. When the answer is not in your notes, it says so instead of guessing.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I create quizzes and flashcards from my own notes?</summary>
+        <p>Yes. Choose a document, then generate quizzes or flashcard decks. You can choose the number of questions and the difficulty, and quizzes include an explanation for each answer.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is my study data private?</summary>
+        <p>Your documents, quizzes, flashcards and progress belong to your account. Other users cannot see them.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="landing-section landing-cta-band" aria-labelledby="start-heading">
+    <div class="landing-inner landing-center">
+      <h2 id="start-heading" class="landing-h2">Start studying smarter today</h2>
+      <p class="muted">Create an account in under a minute and upload your first document.</p>
+      <div class="landing-cta">
+        <a class="btn btn-primary" href="{{ url_for('auth.register') }}">Create your account <i data-lucide="arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="landing-footer">
+  <div class="landing-inner landing-footer-inner">
+    <span class="muted small">&copy; StudySphere</span>
+    <nav class="landing-footer-links" aria-label="Footer">
+      <a href="{{ url_for('auth.login') }}">Log in</a>
+      <a href="{{ url_for('auth.register') }}">Sign up</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</body>
+</html>
