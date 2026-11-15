@@ -6,6 +6,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from .extensions import db
 
 
+# Password hashes starting with this prefix are unusable. Accounts created through Google sign-in
+# get one, so they cannot be logged into with a password.
+UNUSABLE_PASSWORD_PREFIX = "!"
+
+
 def utcnow():
     """Naive UTC timestamp (SQLite stores naive datetimes)."""
     return datetime.now(timezone.utc).replace(tzinfo=None)
@@ -29,7 +34,13 @@ class User(UserMixin, db.Model):
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    @property
+    def has_password(self):
+        return not self.password_hash.startswith(UNUSABLE_PASSWORD_PREFIX)
+
     def check_password(self, password):
+        if not self.has_password:
+            return False
         return check_password_hash(self.password_hash, password)
 
 

@@ -4,6 +4,8 @@
 <h1 class="auth-title">Welcome back</h1>
 <p class="muted">Log in to continue your study sessions.</p>
 
+{% include "_google_signin.html" %}
+
 <form method="post" class="form-stack js-submit" novalidate>
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label class="field">

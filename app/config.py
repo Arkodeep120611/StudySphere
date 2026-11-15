@@ -44,6 +44,13 @@ class Config:
     # Maximum characters of notes sent to Gemini in one request.
     AI_CONTEXT_CHARS = 60_000
 
+    # OAuth 2.0 Client ID for "Sign in with Google". It is public (the browser needs it), so a
+    # default is provided. Set GOOGLE_CLIENT_ID to an empty value to hide the Google button.
+    GOOGLE_CLIENT_ID = os.environ.get(
+        "GOOGLE_CLIENT_ID",
+        "472558590499-7rrcapd4aeq5ccu27h2374ggoefnikj9.apps.googleusercontent.com",
+    ).strip()
+
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
     GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash").strip()
 

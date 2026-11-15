@@ -9,7 +9,7 @@ An AI-powered study platform for students. Upload your notes (PDF, TXT or DOCX),
 | Area | What it does |
 | --- | --- |
 | Homepage | Public landing page at `/` with product overview, FAQ and SEO metadata. Signed-in users are redirected to the dashboard. |
-| Authentication | Register, log in, log out, scrypt-hashed passwords, "keep me logged in", password change, profile name. |
+| Authentication | Register, log in, log out, scrypt-hashed passwords, "keep me logged in", password change, profile name, Sign in with Google (verified server-side). |
 | Dashboard | Document count, quiz attempts, average score, flashcards known, 7-day activity, recent activity and documents. |
 | Documents | Upload PDF/TXT/DOCX (10 MB max), extracted-text view, search across titles, subjects and text with highlighted snippets, edit, delete. |
 | AI quizzes | Multiple-choice, true/false or mixed; easy/medium/hard; 1–20 questions. Scoring, per-question explanations, retakes and attempt history. |
@@ -46,6 +46,12 @@ The SQLite database is created automatically in `instance/studysphere.db` on fir
 
 Without `GEMINI_API_KEY` the app still works for uploads, search, analytics and manual review. AI features (quizzes, flashcards, assistant) show a clear "not configured" error. They never return made-up content.
 
+## Sign in with Google
+
+The Google button uses Google Identity Services and only needs the OAuth Client ID. In the [Google Cloud Console](https://console.cloud.google.com/apis/credentials), add every origin the app is served from under **Authorized JavaScript origins**, for example `http://localhost:5000` and `https://studysphere-hub.vercel.app`. Without this, Google shows an `origin_mismatch` error.
+
+Rules for Google accounts: the email must be verified by Google. A Google sign-in creates a new account when none exists. If the email already belongs to a password account, Google sign-in is refused and the user logs in with the password instead. Accounts created with Google have no password, so password login does not work for them.
+
 ## Configuration
 
 All settings come from environment variables or `.env` (see `.env.example`).
@@ -54,6 +60,7 @@ All settings come from environment variables or `.env` (see `.env.example`).
 | --- | --- | --- |
 | `GEMINI_API_KEY` | _(empty)_ | Gemini API key. Read on the server only; never sent to the browser. |
 | `GEMINI_MODEL` | `gemini-3.6-flash` | Model used for generation. Change if a newer Flash model is preferred. |
+| `GOOGLE_CLIENT_ID` | project's OAuth Client ID | Enables "Sign in with Google". Set empty to hide the button. |
 | `SECRET_KEY` | random per process | Signs session cookies. Set it, or sessions reset on every restart. |
 | `DATABASE_URL` | `instance/studysphere.db` | Any SQLAlchemy URL. |
 | `SESSION_COOKIE_SECURE` | `0` | Set to `1` when serving over HTTPS. |
@@ -66,7 +73,7 @@ pip install pytest
 python -m pytest
 ```
 
-The suite (45 tests) covers the public homepage, authentication, file extraction (including renamed and corrupt files), context selection, AI output validation, the JSON API, per-user data isolation, security headers and the rendering of every page. Gemini is mocked at the service boundary, and an autouse fixture fails any test that reaches the real SDK, so the suite runs offline.
+The suite (58 tests) covers the public homepage, authentication, file extraction (including renamed and corrupt files), context selection, AI output validation, the JSON API, per-user data isolation, security headers and the rendering of every page. Gemini is mocked at the service boundary, and an autouse fixture fails any test that reaches the real SDK, so the suite runs offline.
 
 ## Project structure
 

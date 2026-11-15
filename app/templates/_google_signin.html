@@ -1,0 +1,11 @@
+{% if config.GOOGLE_CLIENT_ID %}
+<div class="banner banner-error google-signin-error" role="alert" id="google-signin-error" hidden><span></span></div>
+<div class="google-signin" id="google-signin"
+     data-client-id="{{ config.GOOGLE_CLIENT_ID }}"
+     data-endpoint="{{ url_for('auth.google_login') }}"
+     data-next="{{ request.args.get('next', '') }}"
+     hidden></div>
+<div class="google-divider" id="google-signin-divider" hidden><span>or</span></div>
+<script src="https://accounts.google.com/gsi/client" defer></script>
+<script src="{{ url_for('static', filename='js/google-signin.js') }}" defer></script>
+{% endif %}
