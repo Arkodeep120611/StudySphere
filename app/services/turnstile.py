@@ -54,9 +54,21 @@ def verify(token, action, config, remote_ip=None):
         return False
 
     if not isinstance(result, dict):
+        logger.warning("Turnstile siteverify returned a non-object response.")
         return False
-    return (
+    passed = (
         result.get("success") is True
         and result.get("action") == action
         and str(result.get("hostname") or "").lower() in hostnames
     )
+    if not passed:
+        # Log the reason (never the secret or token) so failures can be diagnosed.
+        logger.warning(
+            "Turnstile check rejected: success=%s action=%s (expected %s) hostname=%s error-codes=%s",
+            result.get("success"),
+            result.get("action"),
+            action,
+            result.get("hostname"),
+            result.get("error-codes"),
+        )
+    return passed
