@@ -19,6 +19,7 @@
   <label class="check">
     <input type="checkbox" name="remember" value="1"> <span>Keep me logged in</span>
   </label>
+  {% with action="login" %}{% include "_turnstile.html" %}{% endwith %}
   <button class="btn btn-primary btn-block" type="submit">Log in</button>
 </form>
 

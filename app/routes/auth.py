@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from ..models import UNUSABLE_PASSWORD_PREFIX, User
+from ..services import turnstile
 from ..utils import api_error_response
 
 bp = Blueprint("auth", __name__)
@@ -24,6 +25,14 @@ def _safe_next(target):
     return None
 
 
+def _turnstile_passed(action):
+    """Check the Turnstile token from the submitted form. Passes when Turnstile is not configured."""
+    config = current_app.config
+    if not turnstile.is_enabled(config):
+        return True
+    return turnstile.verify(request.form.get(turnstile.TOKEN_FIELD), action, config, request.remote_addr)
+
+
 def _google_display_name(info, email):
     raw = info.get("name") or info.get("given_name") or email.split("@", 1)[0]
     return " ".join(str(raw).split())[:80] or "Student"
@@ -35,6 +44,9 @@ def login():
         return redirect(url_for("pages.dashboard"))
 
     if request.method == "POST":
+        if not _turnstile_passed("login"):
+            flash("Security check failed. Please try again.", "error")
+            return render_template("login.html")
         email = (request.form.get("email") or "").strip().lower()
         password = request.form.get("password") or ""
         user = User.query.filter_by(email=email).first()
@@ -116,7 +128,9 @@ def register():
         form = {"name": name, "email": email}
 
         error = None
-        if not name or len(name) > 80:
+        if not _turnstile_passed("register"):
+            error = "Security check failed. Please try again."
+        elif not name or len(name) > 80:
             error = "Enter your name (up to 80 characters)."
         elif len(email) > 255 or not _EMAIL_RE.match(email):
             error = "Enter a valid email address."

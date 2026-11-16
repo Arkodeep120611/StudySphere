@@ -51,6 +51,13 @@ class Config:
         "472558590499-7rrcapd4aeq5ccu27h2374ggoefnikj9.apps.googleusercontent.com",
     ).strip()
 
+    # Cloudflare Turnstile on the login and register forms. The site key is public and has a
+    # default. The secret key stays on the server. Turnstile is active only when both are set.
+    TURNSTILE_SITE_KEY = os.environ.get("TURNSTILE_SITE_KEY", "0x4AAAAAAGDmnUDGhRim2PYn").strip()
+    TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY", "").strip()
+    # Comma-separated hostnames a Turnstile token may come from. Defaults to the SITE_URL host.
+    TURNSTILE_HOSTNAMES = os.environ.get("TURNSTILE_HOSTNAMES", "").strip()
+
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
     GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash").strip()
 

@@ -24,6 +24,7 @@
     <span>Confirm password</span>
     <input class="input" type="password" name="confirm_password" minlength="8" maxlength="128" autocomplete="new-password" required>
   </label>
+  {% with action="register" %}{% include "_turnstile.html" %}{% endwith %}
   <button class="btn btn-primary btn-block" type="submit">Create account</button>
 </form>
 

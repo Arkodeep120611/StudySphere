@@ -33,6 +33,8 @@ def app():
             "SECRET_KEY": "test-secret",
             "GEMINI_API_KEY": "test-key",
             "GEMINI_MODEL": "test-model",
+            # Keep Turnstile off in tests so forms don't call Cloudflare (a real .env may set it).
+            "TURNSTILE_SECRET_KEY": "",
         }
     )
     yield app
