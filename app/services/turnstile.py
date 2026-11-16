@@ -36,6 +36,7 @@ def verify(token, action, config, remote_ip=None):
     Fails closed: a missing token, a network error or a malformed response all return False.
     """
     if not isinstance(token, str) or not token or len(token) > _MAX_TOKEN_LENGTH:
+        logger.warning("Turnstile check rejected: no usable cf-turnstile-response token on action=%s.", action)
         return False
     hostnames = allowed_hostnames(config)
     if not hostnames:
