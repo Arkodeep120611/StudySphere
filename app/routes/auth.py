@@ -10,8 +10,8 @@ from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from ..models import UNUSABLE_PASSWORD_PREFIX, User
-from ..services import turnstile
-from ..utils import api_error_response
+from ..services import passkeys, turnstile
+from ..utils import api_error_response, json_body
 
 bp = Blueprint("auth", __name__)
 
@@ -56,6 +56,25 @@ def login():
         flash("Invalid email or password.", "error")
 
     return render_template("login.html")
+
+
+@bp.post("/auth/passkey/options")
+def passkey_login_options():
+    """Start a passkey sign-in. Public, because the user has not signed in yet."""
+    if current_user.is_authenticated:
+        return api_error_response("You are already logged in.", 400)
+    return jsonify(passkeys.begin_login(current_app.config))
+
+
+@bp.post("/auth/passkey/verify")
+def passkey_login_verify():
+    if current_user.is_authenticated:
+        return api_error_response("You are already logged in.", 400)
+    data = json_body()
+    user = passkeys.finish_login(data.get("credential"), current_app.config)
+    login_user(user, remember=bool(data.get("remember")))
+    next_url = _safe_next(data.get("next") if isinstance(data.get("next"), str) else None)
+    return jsonify({"redirect": next_url or url_for("pages.dashboard")})
 
 
 @bp.post("/auth/google")

@@ -6,6 +6,11 @@
 
 {% include "_google_signin.html" %}
 
+<div class="passkey-login" data-passkey-login hidden>
+  <button class="btn btn-block" type="button" id="passkey-login-btn" data-next="{{ request.args.get('next', '') }}">Log in with a passkey</button>
+  <div class="google-divider"><span>or</span></div>
+</div>
+
 <form method="post" class="form-stack js-submit" novalidate>
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <label class="field">
@@ -24,4 +29,7 @@
 </form>
 
 <p class="auth-switch muted">New to StudySphere? <a href="{{ url_for('auth.register') }}">Create an account</a></p>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/passkeys.js') }}" defer></script>
 {% endblock %}

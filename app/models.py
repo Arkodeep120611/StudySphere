@@ -34,6 +34,9 @@ class User(UserMixin, db.Model):
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    def to_dict(self):
+        return {"id": self.id, "name": self.name, "email": self.email, "created_at": iso(self.created_at)}
+
     @property
     def has_password(self):
         return not self.password_hash.startswith(UNUSABLE_PASSWORD_PREFIX)
@@ -42,6 +45,29 @@ class User(UserMixin, db.Model):
         if not self.has_password:
             return False
         return check_password_hash(self.password_hash, password)
+
+
+class PasskeyCredential(db.Model):
+    """A WebAuthn passkey registered by a user. Only the public key is stored."""
+
+    __tablename__ = "passkey_credentials"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    credential_id = db.Column(db.String(255), nullable=False, unique=True, index=True)
+    public_key = db.Column(db.LargeBinary, nullable=False)
+    sign_count = db.Column(db.Integer, nullable=False, default=0)
+    name = db.Column(db.String(80), nullable=False, default="Passkey")
+    created_at = db.Column(db.DateTime, nullable=False, default=utcnow)
+    last_used_at = db.Column(db.DateTime, nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "created_at": iso(self.created_at),
+            "last_used_at": iso(self.last_used_at),
+        }
 
 
 class Document(db.Model):

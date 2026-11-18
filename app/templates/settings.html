@@ -46,6 +46,19 @@
     </form>
   </section>
 
+  <section class="card" id="passkey-card" hidden>
+    <h2>Passkeys</h2>
+    <p class="muted small">Log in with your device's fingerprint, face or screen lock instead of a password. Passkeys are stored on your device and never sent to StudySphere.</p>
+    <div id="passkey-list" class="list"></div>
+    <form id="passkey-form" class="form-stack">
+      <label class="field">
+        <span>Name <small class="muted">(optional)</small></span>
+        <input class="input" type="text" name="name" maxlength="80" placeholder="e.g. Work laptop">
+      </label>
+      <div class="form-actions"><button class="btn btn-primary btn-sm" type="submit">Add passkey</button></div>
+    </form>
+  </section>
+
   <section class="card">
     <h2>AI service</h2>
     <dl class="meta">
@@ -59,4 +72,5 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+<script src="{{ url_for('static', filename='js/passkeys.js') }}"></script>
 {% endblock %}
