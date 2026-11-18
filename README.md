@@ -11,7 +11,7 @@ An AI-powered study platform for students. Upload your notes (PDF, TXT or DOCX),
 | Homepage | Public landing page at `/` with product overview, FAQ and SEO metadata. Signed-in users are redirected to the dashboard. |
 | Authentication | Register, log in, log out, scrypt-hashed passwords, "keep me logged in", password change, profile name, Sign in with Google (verified server-side). |
 | Dashboard | Document count, quiz attempts, average score, flashcards known, 7-day activity, recent activity and documents. |
-| Documents | Upload PDF/TXT/DOCX (10 MB max), extracted-text view, search across titles, subjects and text with highlighted snippets, edit, delete. |
+| Documents | Upload PDF/TXT/DOCX (4 MB max), extracted-text view, search across titles, subjects and text with highlighted snippets, edit, delete. |
 | AI quizzes | Multiple-choice, true/false or mixed; easy/medium/hard; 1–20 questions. Scoring, per-question explanations, retakes and attempt history. |
 | Flashcards | AI-generated decks, 3D flip animation, previous/next, Known/Revise tracking, filters, reset, keyboard shortcuts (←/→, Space, K, R). |
 | AI assistant | Chat grounded in one document. Quick actions for summaries and key concepts. Says so when the answer isn't in the notes. |
@@ -111,7 +111,7 @@ tests/                       pytest suite
 - **Authentication:** scrypt password hashing (Werkzeug), Flask-Login sessions, HttpOnly and SameSite=Lax cookies, safe `next` redirects.
 - **Authorization:** every document, quiz, deck, card and chat query is filtered by the logged-in user. Other users' IDs return 404.
 - **CSRF:** Flask-WTF protects all state-changing requests. The JavaScript sends the token in the `X-CSRFToken` header.
-- **Uploads:** extension allow-list, magic-byte checks (a renamed file is rejected), 10 MB request limit, encrypted-PDF and page-count limits, ZIP size check for DOCX. Files are parsed in memory and only the extracted text is stored, so no user files are served back.
+- **Uploads:** extension allow-list, magic-byte checks (a renamed file is rejected), 4 MB request limit (Vercel caps request bodies at 4.5 MB), encrypted-PDF and page-count limits, ZIP size check for DOCX. Files are parsed in memory and only the extracted text is stored, so no user files are served back.
 - **Output safety:** all user content is HTML-escaped in templates and in the JavaScript renderer. AI output is validated item by item and malformed items are dropped.
 - **Headers:** Content-Security-Policy (no inline scripts), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Cache-Control: no-store` on API responses.
 - **Secrets:** the Gemini key is read on the server only. `.env` is git-ignored.
@@ -119,7 +119,7 @@ tests/                       pytest suite
 
 ## Known limitations
 
-- **Scanned PDFs** (images without text) are rejected. OCR is not included.
+- **Scanned PDFs** are read with OCR: pages without a text layer are sent to Gemini vision (up to 40 pages per file). OCR needs `GEMINI_API_KEY`; without it, scanned PDFs are rejected.
 - **Original files are not kept.** Only the extracted text is stored. Re-upload if you need the original.
 - **No migrations.** The schema is created with `db.create_all()`. Schema changes need a migration tool such as Flask-Migrate, or deleting the database during development.
 - **No login rate limiting.** Add it (for example with Flask-Limiter) before exposing the app publicly.

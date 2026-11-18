@@ -55,6 +55,43 @@ def test_renamed_file_is_rejected():
         extract_text(b"just some notes", "pdf", MAX)
 
 
+def _scanned_pdf_bytes(pages):
+    """Build a PDF where pages with None have no text layer (they stand in for scans)."""
+    doc = fitz.open()
+    for text in pages:
+        page = doc.new_page()
+        if text is not None:
+            page.insert_text((72, 72), text)
+    data = doc.tobytes()
+    doc.close()
+    return data
+
+
+def test_scanned_pdf_without_ocr_is_rejected_with_clear_message():
+    with pytest.raises(ApiError, match="no text layer"):
+        extract_text(_scanned_pdf_bytes([None]), "pdf", MAX)
+
+
+def test_scanned_pages_are_sent_to_ocr_and_merged_in_order():
+    seen_batches = []
+
+    def fake_ocr(images):
+        seen_batches.append(len(images))
+        assert all(image[:3] == b"\xff\xd8\xff" for image in images)  # JPEG magic bytes
+        return [f"scanned text {len(seen_batches)}-{i}" for i in range(len(images))]
+
+    data = _scanned_pdf_bytes(["Native page with a proper text layer here.", None, None, None])
+    text = extract_text(data, "pdf", MAX, ocr=fake_ocr, ocr_batch_pages=2)
+    assert seen_batches == [2, 1]
+    assert text.index("Native page") < text.index("scanned text 1-0") < text.index("scanned text 2-0")
+
+
+def test_ocr_page_limit_is_enforced():
+    data = _scanned_pdf_bytes([None, None, None])
+    with pytest.raises(ApiError, match="OCR supports up to 2"):
+        extract_text(data, "pdf", MAX, ocr=lambda images: [""] * len(images), ocr_max_pages=2)
+
+
 def test_binary_txt_is_rejected():
     with pytest.raises(ApiError, match="binary"):
         extract_text(b"\x00\x01\x02\x03", "txt", MAX)

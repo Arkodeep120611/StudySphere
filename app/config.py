@@ -37,9 +37,17 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Uploads are parsed in memory and only the extracted text is stored.
-    MAX_CONTENT_LENGTH = 10 * 1024 * 1024
+    # Vercel rejects request bodies over 4.5 MB before they reach Flask, so the limit is kept
+    # below that everywhere (leaving room for multipart overhead) to behave the same locally.
+    MAX_CONTENT_LENGTH = 4 * 1024 * 1024
     ALLOWED_EXTENSIONS = frozenset({"pdf", "txt", "docx"})
     MAX_DOCUMENT_CHARS = 300_000
+
+    # OCR for scanned PDF pages uses Gemini vision. Pages are rendered at OCR_DPI and sent in
+    # batches. OCR_MAX_PAGES bounds cost and keeps the request within the function time limit.
+    OCR_DPI = 150
+    OCR_BATCH_PAGES = 8
+    OCR_MAX_PAGES = 40
 
     # Maximum characters of notes sent to Gemini in one request.
     AI_CONTEXT_CHARS = 60_000

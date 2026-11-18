@@ -1,12 +1,14 @@
 """Extract plain text from uploaded PDF, DOCX and TXT files.
 
 Files are parsed from memory. Magic bytes are checked so a renamed file is rejected,
-and DOCX archives are checked for decompression bombs before parsing.
+and DOCX archives are checked for decompression bombs before parsing. PDF pages without a
+text layer (scans) are passed to an optional OCR callable, which receives them as JPEG bytes.
 """
 
 import io
 import re
 import zipfile
+from collections.abc import Callable
 
 import fitz  # PyMuPDF
 from docx import Document as DocxDocument
@@ -14,16 +16,26 @@ from docx import Document as DocxDocument
 from ..utils import ApiError
 
 MAX_PDF_PAGES = 300
+# A page with fewer characters than this has no usable text layer and is treated as a scan.
+MIN_TEXT_CHARS_PER_PAGE = 20
 MAX_DOCX_UNCOMPRESSED_BYTES = 50 * 1024 * 1024
 _CONTROL_CHARS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
 
 
-def extract_text(data: bytes, extension: str, max_chars: int) -> str:
+def extract_text(
+    data: bytes,
+    extension: str,
+    max_chars: int,
+    ocr: Callable[[list[bytes]], list[str]] | None = None,
+    ocr_dpi: int = 150,
+    ocr_batch_pages: int = 8,
+    ocr_max_pages: int = 40,
+) -> str:
     if not data:
         raise ApiError("The uploaded file is empty.")
 
     if extension == "pdf":
-        raw = _from_pdf(data)
+        raw = _from_pdf(data, ocr, ocr_dpi, ocr_batch_pages, ocr_max_pages)
     elif extension == "docx":
         raw = _from_docx(data)
     elif extension == "txt":
@@ -33,9 +45,7 @@ def extract_text(data: bytes, extension: str, max_chars: int) -> str:
 
     text = _normalise(raw)
     if not text:
-        raise ApiError(
-            "No readable text was found in this file. Scanned PDFs without OCR are not supported."
-        )
+        raise ApiError("No readable text was found in this file.")
     if len(text) > max_chars:
         raise ApiError(
             f"This document has {len(text):,} characters of text. The maximum is {max_chars:,}. "
@@ -44,7 +54,7 @@ def extract_text(data: bytes, extension: str, max_chars: int) -> str:
     return text
 
 
-def _from_pdf(data: bytes) -> str:
+def _from_pdf(data: bytes, ocr, ocr_dpi: int, ocr_batch_pages: int, ocr_max_pages: int) -> str:
     if not data.startswith(b"%PDF"):
         raise ApiError("This file does not look like a valid PDF.")
     try:
@@ -56,7 +66,31 @@ def _from_pdf(data: bytes) -> str:
             raise ApiError("Password-protected PDFs are not supported.")
         if doc.page_count > MAX_PDF_PAGES:
             raise ApiError(f"This PDF has {doc.page_count} pages. The maximum is {MAX_PDF_PAGES}.")
-        return "\n\n".join(page.get_text("text") for page in doc)
+
+        pages = [page.get_text("text") for page in doc]
+        scanned = [i for i, text in enumerate(pages) if len(text.strip()) < MIN_TEXT_CHARS_PER_PAGE]
+        if not scanned:
+            return "\n\n".join(pages)
+
+        if ocr is None:
+            if len(scanned) == len(pages):
+                raise ApiError(
+                    "This PDF has no text layer. Scanned PDFs need OCR, which requires AI features "
+                    "to be configured."
+                )
+            return "\n\n".join(pages)
+
+        if len(scanned) > ocr_max_pages:
+            raise ApiError(
+                f"This PDF has {len(scanned)} pages without text. OCR supports up to "
+                f"{ocr_max_pages} scanned pages per file."
+            )
+        for start in range(0, len(scanned), ocr_batch_pages):
+            batch = scanned[start:start + ocr_batch_pages]
+            images = [doc[i].get_pixmap(dpi=ocr_dpi).tobytes("jpeg", jpg_quality=85) for i in batch]
+            for index, text in zip(batch, ocr(images)):
+                pages[index] = text
+        return "\n\n".join(pages)
 
 
 def _from_docx(data: bytes) -> str:

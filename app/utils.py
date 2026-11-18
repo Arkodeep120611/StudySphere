@@ -66,7 +66,7 @@ def register_error_handlers(app):
         is_api = request.path.startswith("/api/")
         if isinstance(err, HTTPException):
             if err.code == 413 and is_api:
-                return api_error_response("File is too large. The maximum upload size is 10 MB.", 413)
+                return api_error_response("File is too large. The maximum upload size is 4 MB.", 413)
             if is_api:
                 return api_error_response(err.description, err.code)
             return err.get_response()

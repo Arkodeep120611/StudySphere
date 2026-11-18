@@ -74,3 +74,27 @@ def chat(system_instruction: str, history: list[tuple[str, str]], message: str) 
     ]
     contents.append(types.Content(role="user", parts=[types.Part(text=message)]))
     return _call(contents, system_instruction, temperature=0.2)
+
+
+OCR_PROMPT = (
+    "Transcribe the text in each of the following page images, in order. "
+    "Return only a JSON array of strings with exactly one string per image, in the same order. "
+    "Keep the reading order and line breaks. Use an empty string for a page with no text. "
+    "Do not describe images or add commentary."
+)
+
+
+def ocr_pages(images: list[bytes]) -> list[str]:
+    """Transcribe page images (JPEG bytes) with Gemini vision. Returns one string per image."""
+    parts = [types.Part.from_text(text=OCR_PROMPT)]
+    parts += [types.Part.from_bytes(data=image, mime_type="image/jpeg") for image in images]
+    raw = _call([types.Content(role="user", parts=parts)], None, json_output=True, temperature=0.0)
+    try:
+        texts = json.loads(raw)
+    except json.JSONDecodeError:
+        current_app.logger.warning("OCR returned non-JSON output: %r", raw[:300])
+        raise ApiError("The OCR service returned malformed data. Please try again.", 502)
+    if not isinstance(texts, list) or len(texts) != len(images) or not all(isinstance(t, str) for t in texts):
+        current_app.logger.warning("OCR returned %s items for %s pages", type(texts).__name__, len(images))
+        raise ApiError("The OCR service could not read every page. Please try again.", 502)
+    return texts

@@ -5,6 +5,8 @@
 
   var form = $("upload-form");
   var fileInput = $("file-input");
+  // Matches MAX_CONTENT_LENGTH in app/config.py (Vercel's request limit is 4.5 MB).
+  var MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
   var dropzone = $("dropzone");
   var list = $("doc-list");
   var search = $("doc-search");
@@ -65,6 +67,9 @@
       return;
     }
     $("file-name").textContent = file.name + " (" + Math.max(1, Math.round(file.size / 1024)) + " KB)";
+    if (file.size > MAX_UPLOAD_BYTES) {
+      SS.toast("This file is larger than 4 MB. Choose a smaller file.", "error");
+    }
   }
 
   fileInput.addEventListener("change", function () { setFile(fileInput.files[0]); });
@@ -88,6 +93,10 @@
     var file = fileInput.files[0];
     if (!file) {
       SS.toast("Choose a file to upload.", "error");
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      SS.toast("This file is larger than 4 MB. Choose a smaller file.", "error");
       return;
     }
     var button = $("upload-btn");

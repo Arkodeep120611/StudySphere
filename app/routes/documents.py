@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from ..extensions import db
 from ..models import Document
 from ..services.activity import record_activity
+from ..services.ai import ai_enabled, ocr_pages
 from ..services.extraction import extract_text
 from ..utils import ApiError, clean_str, json_body, like_pattern
 
@@ -82,7 +83,16 @@ def upload_document():
         raise ApiError("Unsupported file type. Upload a PDF, TXT or DOCX file.")
 
     data = file.read()
-    text = extract_text(data, extension, current_app.config["MAX_DOCUMENT_CHARS"])
+    config = current_app.config
+    text = extract_text(
+        data,
+        extension,
+        config["MAX_DOCUMENT_CHARS"],
+        ocr=ocr_pages if ai_enabled() else None,
+        ocr_dpi=config["OCR_DPI"],
+        ocr_batch_pages=config["OCR_BATCH_PAGES"],
+        ocr_max_pages=config["OCR_MAX_PAGES"],
+    )
 
     title = clean_str(request.form.get("title"), 200, "Title") or Path(original).stem[:200]
     subject = clean_str(request.form.get("subject"), 100, "Subject") or "General"
