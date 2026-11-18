@@ -9,11 +9,11 @@ from .utils import api_error_response, register_error_handlers
 
 CONTENT_SECURITY_POLICY = (
     "default-src 'self'; "
-    "script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://accounts.google.com; "
+    "script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://accounts.google.com https://challenges.cloudflare.com; "
     "style-src 'self' 'unsafe-inline'; "
     "img-src 'self' data:; "
-    "connect-src 'self' https://accounts.google.com; "
-    "frame-src https://accounts.google.com; "
+    "connect-src 'self' https://accounts.google.com https://challenges.cloudflare.com; "
+    "frame-src https://accounts.google.com https://challenges.cloudflare.com; "
     "object-src 'none'; "
     "base-uri 'self'; "
     "form-action 'self'; "
